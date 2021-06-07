@@ -1,11 +1,8 @@
-.. automodule:: dodonet.training
+Training Scripts -- :mod:`hmagnet.training`
+*******************************************
+
+.. automodule:: hmagnet.training
    :members:
 
-.. automodule:: dodonet.training.trainer
-   :members:
-
-.. automodule:: dodonet.training.smac_train
-   :members:
-
-.. automodule:: dodonet.training.pommerman_train
+.. automodule:: hmagnet.training.train
    :members:

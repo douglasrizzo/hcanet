@@ -1,31 +1,31 @@
-Neural Network Modules -- :mod:`dodonet.nn.modules`
+Neural Network Modules -- :mod:`hmagnet.nn.modules`
 ***************************************************
 
-.. inheritance-diagram:: dodonet.nn.modules
+.. inheritance-diagram:: hmagnet.nn.modules
 
-.. automodule:: dodonet.nn.modules
+.. automodule:: hmagnet.nn.modules
    :members:
 
-Encoding -- :mod:`dodonet.nn.modules.encoding`
+Encoding -- :mod:`hmagnet.nn.modules.encoding`
 ==============================================
 
-.. inheritance-diagram:: dodonet.nn.modules.encoding
+.. inheritance-diagram:: hmagnet.nn.modules.encoding
 
-.. automodule:: dodonet.nn.modules.encoding
+.. automodule:: hmagnet.nn.modules.encoding
    :members:
 
-Communication -- :mod:`dodonet.nn.modules.graph`
+Communication -- :mod:`hmagnet.nn.modules.graph`
 ================================================
 
-.. inheritance-diagram:: dodonet.nn.modules.graph
+.. inheritance-diagram:: hmagnet.nn.modules.graph
 
-.. automodule:: dodonet.nn.modules.graph
+.. automodule:: hmagnet.nn.modules.graph
    :members:
 
-Action -- :mod:`dodonet.nn.modules.action`
+Action -- :mod:`hmagnet.nn.modules.action`
 ==========================================
 
-.. inheritance-diagram:: dodonet.nn.modules.action
+.. inheritance-diagram:: hmagnet.nn.modules.action
 
-.. automodule:: dodonet.nn.modules.action
+.. automodule:: hmagnet.nn.modules.action
    :members:

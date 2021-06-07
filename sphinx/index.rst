@@ -3,7 +3,8 @@
 .. toctree::
     :maxdepth: 2
 
-    agents.rst
+    controllers.rst
+    envs.rst
     nn.rst
     modules.rst
     training.rst

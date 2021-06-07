@@ -1,7 +1,7 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# dodonet documentation build configuration file, created by
+# hcanet documentation build configuration file, created by
 # sphinx-quickstart on Sun Jun 14 23:12:17 2015.
 #
 # This file is execfile()d with the current directory set to its
@@ -21,7 +21,7 @@ import sphinx_bootstrap_theme
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
 
-from dodonet import __version__
+from hcanet import __version__
 
 # -- General configuration ------------------------------------------------
 
@@ -32,10 +32,15 @@ from dodonet import __version__
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.intersphinx', 'sphinx.ext.inheritance_diagram', 'sphinx.ext.autodoc',
-    'sphinx.ext.doctest', 'sphinx.ext.mathjax', 'sphinx.ext.viewcode', 'sphinx.ext.graphviz',
-    'numpydoc', 'm2r'
-]
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.inheritance_diagram',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.doctest',
+    'sphinx.ext.mathjax',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.graphviz',
+    'numpydoc',
+    'm2r']
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
@@ -43,8 +48,7 @@ intersphinx_mapping = {
     'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
     'torch': ('https://pytorch.org/docs/stable/', None),
     'torch_geometric': ('https://pytorch-geometric.readthedocs.io/en/latest/', None),
-    'sklearn': ('http://scikit-learn.org/stable/', None)
-}
+    'sklearn': ('http://scikit-learn.org/stable/', None)}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -60,8 +64,8 @@ source_suffix = ['.rst', '.md']
 master_doc = 'index'
 
 # General information about the project.
-project = 'dodonet'
-copyright = '2020, Douglas De Rizzo Meneghetti'
+project = 'hcanet'
+copyright = '2021, Douglas De Rizzo Meneghetti'
 author = 'Douglas De Rizzo Meneghetti'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -149,9 +153,7 @@ html_theme_options = {
     # Values: "3" (default) or "2" (in quotes)
     'bootstrap_version': "3",
     'navbar_links': [
-        ("Author", "https://douglasrizzo.github.io", True),
-    ],
-}
+        ("Author", "https://douglasrizzo.github.io", True), ], }
 
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = []
@@ -238,7 +240,7 @@ html_static_path = ['_static']
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'dodonetdoc'
+htmlhelp_basename = 'hcanetdoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -246,8 +248,8 @@ latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     'papersize': 'a4paper',
 
-    # The font size ('10pt', '11pt' or '12pt').
-    # 'pointsize': '10pt',
+  # The font size ('10pt', '11pt' or '12pt').
+  # 'pointsize': '10pt',
 
     # Additional stuff for the LaTeX preamble.
     # 'preamble': '',
@@ -260,8 +262,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'dodonet.tex', 'dodonet Documentation', 'Douglas De Rizzo Meneghetti', 'manual'),
-]
+    (master_doc, 'hcanet.tex', 'hcanet Documentation', 'Douglas De Rizzo Meneghetti', 'manual'), ]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
@@ -287,7 +288,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, 'dodonet', 'dodonet Documentation', [author], 1)]
+man_pages = [(master_doc, 'hcanet', 'hcanet Documentation', [author], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -298,11 +299,13 @@ man_pages = [(master_doc, 'dodonet', 'dodonet Documentation', [author], 1)]
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (
-        master_doc, 'dodonet', 'dodonet Documentation', author, 'dodonet',
-        'One line description of project.', 'Miscellaneous'
-    ),
-]
+    (master_doc,
+     'hcanet',
+     'hcanet Documentation',
+     author,
+     'hcanet',
+     'One line description of project.',
+     'Miscellaneous'), ]
 
 # Documents to append as an appendix to all manuals.
 # texinfo_appendices = []

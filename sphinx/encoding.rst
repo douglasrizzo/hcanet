@@ -1,2 +1,2 @@
-.. automodule:: dodonet.encoding
+.. automodule:: hmagnet.encoding
    :members:

@@ -1,12 +1,12 @@
-Neural Networks -- :mod:`dodonet.nn`
+Neural Networks -- :mod:`hmagnet.nn`
 ************************************
 
-.. inheritance-diagram:: dodonet.nn
+.. inheritance-diagram:: hmagnet.nn
 
-.. automodule:: dodonet.nn
+.. automodule:: hmagnet.nn
    :members:
 
-.. inheritance-diagram:: dodonet.nn.nets
+.. inheritance-diagram:: hmagnet.nn.nets
 
-.. automodule:: dodonet.nn.nets
+.. automodule:: hmagnet.nn.nets
    :members:

@@ -1,20 +1,20 @@
-Reinforcement Learning -- :mod:`dodonet.rl`
+Reinforcement Learning -- :mod:`hmagnet.rl`
 *******************************************
 
-.. automodule:: dodonet.rl
+.. automodule:: hmagnet.rl
    :members:
 
-Tabular reinforcement learning algorithms -- :mod:`dodonet.rl.tabular`
+Tabular reinforcement learning algorithms -- :mod:`hmagnet.rl.tabular`
 ======================================================================
 
 https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/
 
-.. inheritance-diagram:: dodonet.rl.tabular
+.. inheritance-diagram:: hmagnet.rl.tabular
 
-.. automodule:: dodonet.rl.tabular
+.. automodule:: hmagnet.rl.tabular
    :members:
 
-Experience Replay -- :mod:`dodonet.rl.replay`
+Experience Replay -- :mod:`hmagnet.rl.replay`
 =============================================
 
 Implementations of the replay buffer used by DRL algorithms.
@@ -22,7 +22,7 @@ Implementations of the replay buffer used by DRL algorithms.
 This is based mostly on openai/baselines, distributed under the MIT license,
 and also on the Reinforcement Learning tutorial from PyTorch.
 
-.. inheritance-diagram:: dodonet.rl.replay
+.. inheritance-diagram:: hmagnet.rl.replay
 
-.. automodule:: dodonet.rl.replay
+.. automodule:: hmagnet.rl.replay
    :members:
