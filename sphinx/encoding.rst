@@ -1,0 +1,2 @@
+.. automodule:: dodonet.encoding
+   :members:
