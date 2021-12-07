@@ -1,20 +1,20 @@
 import random
 from collections import namedtuple
 
-from baselines.common.segment_tree import MinSegmentTree, SumSegmentTree
+from .segment_tree import MinSegmentTree, SumSegmentTree
 
 # the original algorithm used a namedtuple, but those can't be documented.
 # I learned a hack on how to document them here https://stackoverflow.com/a/1606478
-Transition_ = namedtuple('Transition', ('state', 'action', 'reward', 'done', 'av_actions'))
+Transition_ = namedtuple("Transition", ("state", "action", "reward", "done", "av_actions"))
 
 
 class Transition(Transition_):
    """A named tuple to store a state transition (s, a, s', r)"""
+
    pass
 
 
 class ReplayBuffer:
-
    def __init__(self, size):
       """Create Replay buffer.
         Parameters
@@ -45,15 +45,15 @@ class ReplayBuffer:
 
    def extend(self, obs_t, action, reward, obs_tp1, done):
       """
-      add a new batch of transitions to the buffer
-      :param obs_t: (Union[Tuple[Union[np.ndarray, int]], np.ndarray]) the last batch of observations
-      :param action: (Union[Tuple[Union[np.ndarray, int]]], np.ndarray]) the batch of actions
-      :param reward: (Union[Tuple[float], np.ndarray]) the batch of the rewards of the transition
-      :param obs_tp1: (Union[Tuple[Union[np.ndarray, int]], np.ndarray]) the current batch of observations
-      :param done: (Union[Tuple[bool], np.ndarray]) terminal status of the batch
-      Note: uses the same names as .add to keep compatibility with named argument passing
-               but expects iterables and arrays with more than 1 dimensions
-      """
+        add a new batch of transitions to the buffer
+        :param obs_t: (Union[Tuple[Union[np.ndarray, int]], np.ndarray]) the last batch of observations
+        :param action: (Union[Tuple[Union[np.ndarray, int]]], np.ndarray]) the batch of actions
+        :param reward: (Union[Tuple[float], np.ndarray]) the batch of the rewards of the transition
+        :param obs_tp1: (Union[Tuple[Union[np.ndarray, int]], np.ndarray]) the current batch of observations
+        :param done: (Union[Tuple[bool], np.ndarray]) terminal status of the batch
+        Note: uses the same names as .add to keep compatibility with named argument passing
+                 but expects iterables and arrays with more than 1 dimensions
+        """
       for data in zip(obs_t, action, reward, obs_tp1, done):
          if self._next_idx >= len(self._storage):
             self._storage.append(data)
@@ -76,8 +76,7 @@ class ReplayBuffer:
 
 
 class PrioritizedReplayBuffer(ReplayBuffer):
-
-   def __init__(self, size, alpha=.6):
+   def __init__(self, size, alpha=0.6):
       """Create Prioritized Replay buffer.
         Parameters
         ----------
@@ -114,15 +113,15 @@ class PrioritizedReplayBuffer(ReplayBuffer):
 
    def extend(self, obs_t, action, reward, obs_tp1, done):
       """
-      add a new batch of transitions to the buffer
-      :param obs_t: (Union[Tuple[Union[np.ndarray, int]], np.ndarray]) the last batch of observations
-      :param action: (Union[Tuple[Union[np.ndarray, int]]], np.ndarray]) the batch of actions
-      :param reward: (Union[Tuple[float], np.ndarray]) the batch of the rewards of the transition
-      :param obs_tp1: (Union[Tuple[Union[np.ndarray, int]], np.ndarray]) the current batch of observations
-      :param done: (Union[Tuple[bool], np.ndarray]) terminal status of the batch
-      Note: uses the same names as .add to keep compatibility with named argument passing
-         but expects iterables and arrays with more than 1 dimensions
-      """
+        add a new batch of transitions to the buffer
+        :param obs_t: (Union[Tuple[Union[np.ndarray, int]], np.ndarray]) the last batch of observations
+        :param action: (Union[Tuple[Union[np.ndarray, int]]], np.ndarray]) the batch of actions
+        :param reward: (Union[Tuple[float], np.ndarray]) the batch of the rewards of the transition
+        :param obs_tp1: (Union[Tuple[Union[np.ndarray, int]], np.ndarray]) the current batch of observations
+        :param done: (Union[Tuple[bool], np.ndarray]) terminal status of the batch
+        Note: uses the same names as .add to keep compatibility with named argument passing
+           but expects iterables and arrays with more than 1 dimensions
+        """
       idx = self._next_idx
       super().extend(obs_t, action, reward, obs_tp1, done)
       while idx != self._next_idx:
@@ -140,7 +139,7 @@ class PrioritizedReplayBuffer(ReplayBuffer):
          res.append(idx)
       return res
 
-   def sample(self, batch_size, beta=.4):
+   def sample(self, batch_size, beta=0.4):
       """Sample a batch of experiences.
         compared to ReplayBuffer.sample
         it also returns importance weights and idxes
@@ -225,7 +224,6 @@ class PrioritizedReplayBuffer(ReplayBuffer):
 
 
 class EpisodeReplayBuffer:
-
    def __init__(self, size):
       """Create Replay buffer.
         Parameters
@@ -267,9 +265,9 @@ class EpisodeReplayBuffer:
 
    def extend(self, datas):
       """
-      add a new batch of episodes to the buffer
-      :param datas: a list of transitions
-      """
+        add a new batch of episodes to the buffer
+        :param datas: a list of transitions
+        """
       for data in datas:
          if self._next_idx >= len(self._storage):
             self._storage.append(data)
@@ -279,8 +277,7 @@ class EpisodeReplayBuffer:
 
 
 class PrioritizedEpisodeReplayBuffer(EpisodeReplayBuffer):
-
-   def __init__(self, size, alpha=.6):
+   def __init__(self, size, alpha=0.6):
       """Create Prioritized Replay buffer.
         Parameters
         ----------
@@ -317,9 +314,9 @@ class PrioritizedEpisodeReplayBuffer(EpisodeReplayBuffer):
 
    def extend(self, datas):
       """
-      add a new batch of episodes to the buffer
-      :param datas: a list of transitions
-      """
+        add a new batch of episodes to the buffer
+        :param datas: a list of transitions
+        """
       idx = self._next_idx
       super().extend(datas)
       while idx != self._next_idx:
@@ -337,7 +334,7 @@ class PrioritizedEpisodeReplayBuffer(EpisodeReplayBuffer):
          res.append(idx)
       return res
 
-   def sample(self, batch_size, beta=.4):
+   def sample(self, batch_size, beta=0.4):
       """Sample a batch of experiences.
         compared to EpisodeReplayBuffer.sample
         it also returns importance weights and idxes
@@ -359,7 +356,7 @@ class PrioritizedEpisodeReplayBuffer(EpisodeReplayBuffer):
         idxes: [int]
             List of size (batch_size) and dtype int
             indexes in buffer of sampled experiences
-      """
+        """
       assert beta > 0
 
       idxes = self._sample_proportional(batch_size)

@@ -31,28 +31,35 @@ from sortedcontainers import SortedDict
 # The MIT license was taken from there
 class TabularRLAlgorithm:
 
-   AVAILABLE_POLICIES = ['egreedy', 'boltzmann']
+   AVAILABLE_POLICIES = ["egreedy", "boltzmann"]
 
-   def __init__(self, actions, policy='egreedy', learning_rate=0.01, reward_decay=0.9, epsilon=0.1):
+   def __init__(
+      self,
+      actions,
+      policy="egreedy",
+      learning_rate=0.01,
+      reward_decay=0.9,
+      epsilon=0.1,
+   ):
       """Implementation of a tabular RL algorithm in Python
 
-      :param actions: number of actions
-      :type actions: int
-      :param policy: name of one of the available policies, defaults to 'egreedy'
-      :type policy: str, optional
-      :param learning_rate: learning rate of the algorithm, defaults to 0.01
-      :type learning_rate: float, optional
-      :param reward_decay: reward decay, defaults to 0.9
-      :type reward_decay: float, optional
-      :param epsilon: probability of taking a random action in the e-greedy policy, defaults to 0.1
-      :type epsilon: float, optional
-      :raises ValueError: if an unknown policy name is passed as argument
-      :return: an object which implements functions to update the Q-table, as well as select actions according to policies and the values in the Q-table
-      :rtype: QLearningTable
-      """
+        :param actions: number of actions
+        :type actions: int
+        :param policy: name of one of the available policies, defaults to 'egreedy'
+        :type policy: str, optional
+        :param learning_rate: learning rate of the algorithm, defaults to 0.01
+        :type learning_rate: float, optional
+        :param reward_decay: reward decay, defaults to 0.9
+        :type reward_decay: float, optional
+        :param epsilon: probability of taking a random action in the e-greedy policy, defaults to 0.1
+        :type epsilon: float, optional
+        :raises ValueError: if an unknown policy name is passed as argument
+        :return: an object which implements functions to update the Q-table, as well as select actions according to policies and the values in the Q-table
+        :rtype: QLearningTable
+        """
       if policy not in TabularRLAlgorithm.AVAILABLE_POLICIES:
-         raise ValueError('Unknown policy \'{}\'. Choose one from {}'.format(
-             policy, TabularRLAlgorithm.AVAILABLE_POLICIES))
+         raise ValueError("Unknown policy '{}'. Choose one from {}".format(
+            policy, TabularRLAlgorithm.AVAILABLE_POLICIES))
 
       self.actions = actions
       self.policy = policy
@@ -64,10 +71,10 @@ class TabularRLAlgorithm:
    def _boltzmann_policy(self, s: str) -> int:
       """Select an action for the given state `s` according to a Boltzmann policy, in which the probabilities of each action being chosen is equal to their softmaxed values
 
-      :param s: a state
-      :type s: str
-      :return: chosen action
-      """
+        :param s: a state
+        :type s: str
+        :return: chosen action
+        """
       # https://stackoverflow.com/a/4442687/1245214
       # create a cdf of the softmaxed values and find where a
       # number between 0 and 1 would be inserted in the cdf list
@@ -77,10 +84,10 @@ class TabularRLAlgorithm:
    def _egreedy_policy(self, s: str) -> int:
       """Randomly select an action with probability epsilon, or select the best action for the given state `s` with probability 1 - epsilon
 
-      :param s: a state
-      :type s: str
-      :return: chosen action
-      """
+        :param s: a state
+        :type s: str
+        :return: chosen action
+        """
       if np.random.uniform() > self.epsilon:
          state_actions = self.q_table[s]
 
@@ -98,9 +105,9 @@ class TabularRLAlgorithm:
    def choose_action(self, s: str) -> int:
       self._check_state_exist(s)
 
-      if self.policy == 'egreedy':
+      if self.policy == "egreedy":
          action = self._egreedy_policy(s)
-      elif self.policy == 'boltzmann':
+      elif self.policy == "boltzmann":
          action = self._boltzmann_policy(s)
 
       return action
@@ -112,16 +119,15 @@ class TabularRLAlgorithm:
    def learn(self, s: str, a: int, r: float, s_: str):
       """Update the Q-table
 
-      :param s: current state
-      :param a: action taken
-      :param r: reward signal
-      :param s_: observed future state
-      """
+        :param s: current state
+        :param a: action taken
+        :param r: reward signal
+        :param s_: observed future state
+        """
       pass
 
 
 class QLearning(TabularRLAlgorithm):
-
    def learn(self, s: str, a: int, r: float, s_: str):
       self._check_state_exist(s_)
       self._check_state_exist(s)
@@ -134,7 +140,6 @@ class QLearning(TabularRLAlgorithm):
 
 
 class Sarsa(TabularRLAlgorithm):
-
    def learn(self, s: str, a: int, r: float, s_: str):
       self._check_state_exist(s_)
       self._check_state_exist(s)
@@ -147,8 +152,14 @@ class Sarsa(TabularRLAlgorithm):
 
 
 class TabularRLLambdaAlgorithm(TabularRLAlgorithm):
-
-   def __init__(self, actions, learning_rate=0.01, reward_decay=0.9, epsilon=0.1, trace_decay=0.9):
+   def __init__(
+      self,
+      actions,
+      learning_rate=0.01,
+      reward_decay=0.9,
+      epsilon=0.1,
+      trace_decay=0.9,
+   ):
       super(TabularRLAlgorithm, self).__init__(actions, learning_rate, reward_decay, epsilon)
 
       # backward view, eligibility trace.
@@ -176,12 +187,11 @@ class TabularRLLambdaAlgorithm(TabularRLAlgorithm):
 
 
 class QLambda(TabularRLLambdaAlgorithm):
-
    def learn(self, s, a, r, s_, a_):
       self._check_state_exist(s_)
       self._check_state_exist(s)
       q_predict = self.q_table[s][a]
-      if s_ != 'terminal':
+      if s_ != "terminal":
          q_target = r + self.gamma * np.max(self.q_table[s_])  # next state is not terminal
       else:
          q_target = r  # next state is terminal
@@ -192,13 +202,12 @@ class QLambda(TabularRLLambdaAlgorithm):
 
 
 class SarsaLambda(TabularRLLambdaAlgorithm):
-
    def learn(self, s, a, r, s_, a_):
       self._check_state_exist(s_)
       self._check_state_exist(s)
       q_predict = self.q_table[s][a]
-      if s_ != 'terminal':
-         q_target = r + self.gamma * self.q_table[s_][a_]  # next state is not terminal
+      if s_ != "terminal":
+         q_target = (r + self.gamma * self.q_table[s_][a_])  # next state is not terminal
       else:
          q_target = r  # next state is terminal
       error = q_target - q_predict

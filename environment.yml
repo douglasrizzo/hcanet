@@ -1,0 +1,46 @@
+name: hcanet
+channels:
+  - defaults
+  - conda-forge
+  - nvidia
+  - pytorch
+dependencies:
+  - cudatoolkit=11.1
+  - pip
+  - python=3.8.*
+  - pytorch
+  - pip:
+      - .
+      # these allow replays to be watched
+      - git+https://github.com/douglasrizzo/pysc2.git@smac-view
+      - pygame==1.9.6
+      # less restrictive than baselines
+      - stable-baselines
+      - git+https://github.com/oxwhirl/smac.git
+      - GPUtil
+      - numpy
+      - scipy
+      - sortedcontainers
+      # has to be at least 1.5.0, which allows access to GAT attention weights
+      - torch-geometric>=1.5.0
+      - tqdm
+      - wandb
+      # dev
+      - black
+      - isort
+      - mypy
+      - pylama
+      - yapf
+      # tests
+      - coverage
+      - coveralls
+      - flake8
+      - nose
+      - nose-cov
+      - python-coveralls
+      # docs
+      - bibtex-pygments-lexer
+      - numpydoc
+      - Sphinx
+      - sphinx_autodoc_annotation
+      - sphinx_bootstrap_theme

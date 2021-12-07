@@ -3,7 +3,6 @@ import torch.nn as nn
 
 
 class VDNMixer(nn.Module):
-
    def __init__(self):
       super(VDNMixer, self).__init__()
 

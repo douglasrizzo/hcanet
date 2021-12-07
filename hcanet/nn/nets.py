@@ -11,39 +11,40 @@ from .modules.mixing import VDNMixer
 
 
 class HeteroMAGNet(th.nn.Module):
-
    class GraphLayerType(Enum):
-      GCN = 'GCN'
-      GAT = 'GAT'
-      RGCN = 'RGCN'
+      GCN = "GCN"
+      GAT = "GAT"
+      RGCN = "RGCN"
 
-   def __init__(self,
-                action_layer_type: HeteroMAGNetActionLayer.LayerType,
-                share_encoding: bool,
-                share_comms: bool,
-                share_action: bool,
-                num_node_types: int,
-                agent_node_types: list,
-                node_types: list,
-                features_by_node_class: list,
-                encoding_output_size: int,
-                graph_module_sizes: list,
-                action_hidden_size: int,
-                action_output_sizes: list,
-                act_encoding: str,
-                act_comms: str,
-                act_action: str,
-                use_rnn_encoding: bool,
-                use_rnn_action: bool,
-                device,
-                graph_layer_type: GraphLayerType = None,
-                full_receptive_field: bool = True,
-                gat_n_heads: int = 1,
-                gat_average_last: bool = False,
-                rgcn_n2_relations: bool = True,
-                rgcn_num_bases: int = 1,
-                rgcn_fast: bool = False,
-                mixing=None):
+   def __init__(
+      self,
+      action_layer_type: HeteroMAGNetActionLayer.LayerType,
+      share_encoding: bool,
+      share_comms: bool,
+      share_action: bool,
+      num_node_types: int,
+      agent_node_types: list,
+      node_types: list,
+      features_by_node_class: list,
+      encoding_output_size: int,
+      graph_module_sizes: list,
+      action_hidden_size: int,
+      action_output_sizes: list,
+      act_encoding: str,
+      act_comms: str,
+      act_action: str,
+      use_rnn_encoding: bool,
+      use_rnn_action: bool,
+      device,
+      graph_layer_type: GraphLayerType = None,
+      full_receptive_field: bool = True,
+      gat_n_heads: int = 1,
+      gat_average_last: bool = False,
+      rgcn_n2_relations: bool = True,
+      rgcn_num_bases: int = 1,
+      rgcn_fast: bool = False,
+      mixing=None,
+   ):
       super().__init__()
 
       self.device = device
@@ -62,16 +63,20 @@ class HeteroMAGNet(th.nn.Module):
          n_agents_by_net_encoding = [sum(n_agents_by_net)]
          self.node_types_encoding = shared_node_types
 
-         assert len(set(features_by_node_class)) == 1, 'Number of inputs by node class must all be equal when sharing parameters from the encoding layer'
+         assert (
+             len(set(features_by_node_class)) == 1
+         ), "Number of inputs by node class must all be equal when sharing parameters from the encoding layer"
          self.features_by_node_class = list(set(features_by_node_class))
       else:
          n_agents_by_net_encoding = n_agents_by_net
          self.node_types_encoding = individual_node_types
 
-         assert len(features_by_node_class) == len(n_agents_by_net_encoding), 'Number of node classes and number of inputs must be the same when not sharing parameters from the encoding layer'
+         assert len(features_by_node_class) == len(
+             n_agents_by_net_encoding
+         ), "Number of node classes and number of inputs must be the same when not sharing parameters from the encoding layer"
          self.features_by_node_class = features_by_node_class
 
-      self.node_types_comms = individual_node_types if not share_comms else shared_node_types
+      self.node_types_comms = (individual_node_types if not share_comms else shared_node_types)
 
       if share_action:
          n_agents_by_net_action = [sum(n_agents_by_net)]
@@ -82,71 +87,83 @@ class HeteroMAGNet(th.nn.Module):
          n_actions_by_agent_class = [action_output_sizes[u] for u in agent_node_types]
          self.node_types_action = individual_node_types
 
-      self.encoding_layer = EncoderByType(n_agents_by_net_encoding,
-                                          self.features_by_node_class,
-                                          encoding_output_size,
-                                          use_rnn_encoding,
-                                          act_encoding,
-                                          device)
+      self.encoding_layer = EncoderByType(
+         n_agents_by_net_encoding,
+         self.features_by_node_class,
+         encoding_output_size,
+         use_rnn_encoding,
+         act_encoding,
+         device,
+      )
 
       self.relational_layer = None
       if graph_layer_type == self.GraphLayerType.GCN:
-         self.relational_layer = GCNModule(self.encoding_layer.out_features,
-                                           graph_module_sizes,
-                                           num_node_types,
-                                           agent_node_types,
-                                           act_comms,
-                                           device,
-                                           full_receptive_field)  # type: GraphModule
+         self.relational_layer = GCNModule(
+            self.encoding_layer.out_features,
+            graph_module_sizes,
+            num_node_types,
+            agent_node_types,
+            act_comms,
+            device,
+            full_receptive_field,
+         )  # type: GraphModule
       elif graph_layer_type == self.GraphLayerType.GAT:
-         self.relational_layer = GATModule(self.encoding_layer.out_features,
-                                           graph_module_sizes,
-                                           num_node_types,
-                                           agent_node_types,
-                                           act_comms,
-                                           device,
-                                           full_receptive_field,
-                                           gat_n_heads,
-                                           gat_average_last)
+         self.relational_layer = GATModule(
+            self.encoding_layer.out_features,
+            graph_module_sizes,
+            num_node_types,
+            agent_node_types,
+            act_comms,
+            device,
+            full_receptive_field,
+            gat_n_heads,
+            gat_average_last,
+         )
       elif graph_layer_type == self.GraphLayerType.RGCN:
-         self.relational_layer = RGCNModule(self.encoding_layer.out_features,
-                                            graph_module_sizes,
-                                            num_node_types,
-                                            agent_node_types,
-                                            act_comms,
-                                            device,
-                                            full_receptive_field,
-                                            rgcn_n2_relations,
-                                            rgcn_num_bases,
-                                            rgcn_fast)
+         self.relational_layer = RGCNModule(
+            self.encoding_layer.out_features,
+            graph_module_sizes,
+            num_node_types,
+            agent_node_types,
+            act_comms,
+            device,
+            full_receptive_field,
+            rgcn_n2_relations,
+            rgcn_num_bases,
+            rgcn_fast,
+         )
 
       # here we use relational_layer.out_features instead of relational_output_size
       # because the output size of some graph modules depend on more than the number of features,
       # like the GATModule
-      act_layer_input_size = self.relational_layer.out_features if self.relational_layer is not None else self.encoding_layer.out_features
+      act_layer_input_size = (self.relational_layer.out_features if self.relational_layer
+                              is not None else self.encoding_layer.out_features)
 
       if action_layer_type == HeteroMAGNetActionLayer.LayerType.DQN:
-         self.action_layer = QLayer(n_agents_by_net_action,
-                                    act_layer_input_size,
-                                    action_hidden_size,
-                                    n_actions_by_agent_class,
-                                    use_rnn_action,
-                                    act_action,
-                                    device)
+         self.action_layer = QLayer(
+            n_agents_by_net_action,
+            act_layer_input_size,
+            action_hidden_size,
+            n_actions_by_agent_class,
+            use_rnn_action,
+            act_action,
+            device,
+         )
 
       elif action_layer_type == HeteroMAGNetActionLayer.LayerType.DDQN:
          self.action_layer = ActorCriticLayer(
-             n_agents_by_net_action,
-             act_layer_input_size,
-             action_hidden_size,
-             n_actions_by_agent_class,
-             use_rnn_action,
-             act_action,
-             device,
-             action_layer_type == HeteroMAGNetActionLayer.LayerType.DDQN)
+            n_agents_by_net_action,
+            act_layer_input_size,
+            action_hidden_size,
+            n_actions_by_agent_class,
+            use_rnn_action,
+            act_action,
+            device,
+            action_layer_type == HeteroMAGNetActionLayer.LayerType.DDQN,
+         )
 
       self.mixer = None
-      if mixing == 'vdn':
+      if mixing == "vdn":
          self.mixer = VDNMixer()
 
    def forward(self, data):
@@ -172,7 +189,7 @@ class HeteroMAGNet(th.nn.Module):
       input_by_class = {}
       for nt in self.node_types_encoding.unique():
          # grab nodes of the current class
-         node_mask = (batch_node_types_encoding == nt)
+         node_mask = batch_node_types_encoding == nt
          # grab features only of those nodes, remove padding
          in_size = self.features_by_node_class[int(nt)]
          input_by_class[int(nt)] = x[node_mask, :in_size]
@@ -194,7 +211,7 @@ class HeteroMAGNet(th.nn.Module):
       obs_by_class = {}
       for nt in self.node_types_action.unique():
          # grab nodes of that type
-         agent_mask = (batch_node_types_action == nt)
+         agent_mask = batch_node_types_action == nt
          obs_by_class[int(nt)] = x[agent_mask]
          # obs_by_class[nt] = th.cat((input_by_class[nt], x[agent_indices]), dim=-1)
 

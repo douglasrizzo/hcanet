@@ -5,13 +5,7 @@ This repository contains one of the projects I did during my PhD in Artificial I
 - HMAG-QNet stands for __Heterogeneous Multi-Agent Graph Q-Network__. Paper and code information is available in the [v8 tag](https://github.com/douglasrizzo/hcanet/releases/tag/v8).
 - HCA-Net stands for __Neural Network for Heterogeneous Communicative Agents__. Paper and code information is available in the [v9 tag](https://github.com/douglasrizzo/hcanet/releases/tag/v9).
 
-Dependencies are listed inside `setup.py`. You can choose to install PyTorch and PyTorch Geometric before this package and configure GPU support.
-
-To install, run:
-
-```sh
-pip install .
-```
+To configure an environment, use `conda env create` in the root folder of the repository, which will configure a conda environment ready for use.
 
 ## Training time
 

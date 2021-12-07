@@ -9,19 +9,20 @@ from ..activation import get_activation
 
 
 class HeteroMAGNetActionLayer(nn.Module):
-
    class LayerType(Enum):
-      DQN = 'Deep Q-Network'
-      DDQN = 'Dueling Deep Q-Network'
+      DQN = "Deep Q-Network"
+      DDQN = "Dueling Deep Q-Network"
 
-   def __init__(self,
-                n_agents_by_net: list,
-                input_size: int,
-                hidden_size: int,
-                output_sizes: list,
-                use_rnn: bool,
-                activation: str,
-                device: torch_device):
+   def __init__(
+      self,
+      n_agents_by_net: list,
+      input_size: int,
+      hidden_size: int,
+      output_sizes: list,
+      use_rnn: bool,
+      activation: str,
+      device: torch_device,
+   ):
       super().__init__()
 
       self.n_agents_by_net = n_agents_by_net
@@ -45,7 +46,7 @@ class HeteroMAGNetActionLayer(nn.Module):
    def forward(self, x: dict, node_type) -> th.tensor:
       """"""
       raise NotImplementedError(
-          "This class does not directly implement the forward() method, please instantiate one of its base classes"
+         "This class does not directly implement the forward() method, please instantiate one of its base classes"
       )
 
    def init_hidden(self, batch_size: int):
@@ -54,12 +55,16 @@ class HeteroMAGNetActionLayer(nn.Module):
 
       self.hidden_states = []
       for i in range(len(self.layer1)):
-         hs = th.zeros(self.n_agents_by_net[i] * batch_size,
-                       self.layer1[i].hidden_size,
-                       device=self.device)
-         cs = th.zeros(self.n_agents_by_net[i] * batch_size,
-                       self.layer1[i].hidden_size,
-                       device=self.device)
+         hs = th.zeros(
+            self.n_agents_by_net[i] * batch_size,
+            self.layer1[i].hidden_size,
+            device=self.device,
+         )
+         cs = th.zeros(
+            self.n_agents_by_net[i] * batch_size,
+            self.layer1[i].hidden_size,
+            device=self.device,
+         )
          self.hidden_states.append((hs, cs))
 
    def apply_net(self, index, x: th.tensor):
@@ -103,25 +108,28 @@ class HeteroMAGNetActionLayer(nn.Module):
 class QLayer(HeteroMAGNetActionLayer):
    """An action layer which approximates one vector for each agent/agent class/all agents. Can be used to approximate Q-values.
 
-   :param HeteroMAGNetActionLayer: [description]
-   :type HeteroMAGNetActionLayer: [type]
-   """
-
-   def __init__(self,
-                n_agents_by_net,
-                input_size: int,
-                hidden_size: int,
-                output_sizes: list,
-                use_rnn: bool,
-                activation: str,
-                device: torch_device):
-      super().__init__(n_agents_by_net,
-                       input_size,
-                       hidden_size,
-                       output_sizes,
-                       use_rnn,
-                       activation,
-                       device)
+    :param HeteroMAGNetActionLayer: [description]
+    :type HeteroMAGNetActionLayer: [type]
+    """
+   def __init__(
+      self,
+      n_agents_by_net,
+      input_size: int,
+      hidden_size: int,
+      output_sizes: list,
+      use_rnn: bool,
+      activation: str,
+      device: torch_device,
+   ):
+      super().__init__(
+         n_agents_by_net,
+         input_size,
+         hidden_size,
+         output_sizes,
+         use_rnn,
+         activation,
+         device,
+      )
       self.layer2 = nn.ModuleList()
       for i in range(len(output_sizes)):
          out_size = output_sizes[i]
@@ -131,7 +139,7 @@ class QLayer(HeteroMAGNetActionLayer):
 
       def init_xavier(m):
          if type(m) == nn.Linear:
-            nn.init.xavier_uniform_(m.weight, gain=nn.init.calculate_gain('sigmoid'))
+            nn.init.xavier_uniform_(m.weight, gain=nn.init.calculate_gain("sigmoid"))
 
       for nets in (self.layer1, self.layer2):
          for net in nets:
@@ -164,25 +172,27 @@ class QLayer(HeteroMAGNetActionLayer):
 
 
 class ActorCriticLayer(HeteroMAGNetActionLayer):
-
-   def __init__(self,
-                node_types,
-                input_size: int,
-                hidden_size: int,
-                output_sizes: list,
-                use_rnn: bool,
-                activation: str,
-                device: torch_device,
-                dueling_dqn=False):
-      """An action layer which uses two individual output models for each agent/agent class/all agents to approximate one vector and one scalar. Can be used to approximate policy distributions/action-values and state-values/advantages.
-      """
-      super().__init__(node_types,
-                       input_size,
-                       hidden_size,
-                       output_sizes,
-                       use_rnn,
-                       activation,
-                       device)
+   def __init__(
+      self,
+      node_types,
+      input_size: int,
+      hidden_size: int,
+      output_sizes: list,
+      use_rnn: bool,
+      activation: str,
+      device: torch_device,
+      dueling_dqn=False,
+   ):
+      """An action layer which uses two individual output models for each agent/agent class/all agents to approximate one vector and one scalar. Can be used to approximate policy distributions/action-values and state-values/advantages."""
+      super().__init__(
+         node_types,
+         input_size,
+         hidden_size,
+         output_sizes,
+         use_rnn,
+         activation,
+         device,
+      )
 
       self.policy_heads = nn.ModuleList()
       self.value_heads = nn.ModuleList()
@@ -194,14 +204,14 @@ class ActorCriticLayer(HeteroMAGNetActionLayer):
          #   h_in = hidden_state.reshape(-1, self.args.rnn_hidden_dim)
 
          self.policy_heads.append(
-             nn.Sequential(nn.Linear(hidden_size, out_size)) if self.dueling_dqn else nn.
-             Sequential(nn.Linear(hidden_size, out_size), th.nn.Softmax()))
+            nn.Sequential(nn.Linear(hidden_size, out_size)) if self.dueling_dqn else nn.
+            Sequential(nn.Linear(hidden_size, out_size), th.nn.Softmax()))
 
          self.value_heads.append(nn.Linear(hidden_size, 1))
 
       def init_xavier(m):
          if type(m) == nn.Linear:
-            nn.init.xavier_uniform_(m.weight, gain=nn.init.calculate_gain('sigmoid'))
+            nn.init.xavier_uniform_(m.weight, gain=nn.init.calculate_gain("sigmoid"))
 
       for nets in (self.layer1, self.policy_heads, self.value_heads):
          for net in nets:
@@ -225,8 +235,11 @@ class ActorCriticLayer(HeteroMAGNetActionLayer):
          # apply it to the data, keep in a dict alongside node indices
          intermediate_value = self.apply_net(nt, x[nt])
          # NOTE it's important that the first two arguments are passed in this order, like the Q-network does
-         output_dict[nt] = node_indices, policy_head(intermediate_value), value_head(
-               intermediate_value).squeeze()
+         output_dict[nt] = (
+            node_indices,
+            policy_head(intermediate_value),
+            value_head(intermediate_value).squeeze(),
+         )
       del node_indices, intermediate_value
 
       for nt in unique_types:
@@ -239,7 +252,10 @@ class ActorCriticLayer(HeteroMAGNetActionLayer):
             if output_dict[nt][2].ndim == 0:
                output_dict[nt][2].unsqueeze_(0)
 
-            output_dict[nt] = output_dict[nt][0], output_dict[nt][2].unsqueeze(1) + output_dict[nt][1] - output_dict[nt][1].mean()
+            output_dict[nt] = (
+               output_dict[nt][0],
+               output_dict[nt][2].unsqueeze(1) + output_dict[nt][1] - output_dict[nt][1].mean(),
+            )
 
       output = self._pad(output_dict)
 

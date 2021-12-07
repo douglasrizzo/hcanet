@@ -1,22 +1,23 @@
-train_hmagnet() {
-  if [[ $# < 3 || $# > 5 ]]; then
-    echo "Invalid number of arguments (MAP COMMS MIXER [REPLAY] [STEPS]), where:"
+train_hcanet() {
+  if [[ $# < 2 || $# > 4 ]]; then
+    echo "Invalid number of arguments (MAP COMMS MIXER [STEPS]), where:"
     echo
     echo "      MAP: the name of a SMAC map"
     echo "    COMMS: {None, GAT, RGCN}"
     echo "    MIXER: {TRUE, FALSE}"
-    echo "   REPLAY: {None, mean, max} (def. None)"
-    echo "    STEPS: number of training steps (def. 1000000)"
+    echo "    STEPS: number of training steps (def. 5000000)"
 
     return 1
   fi
 
-  for i in $(seq 5); do
-    train_hmagnet_single_v2 $1 $2 $3 $i ${4:-None} ${5:-1000000}
+  train_hcanet_single_v2_small_eval_save_replay $1 $2 $3 1 ${4:-5000000}
+
+  for i in $(seq 2 5); do
+    train_hcanet_single_v2 $1 $2 $3 $i ${4:-5000000}
   done
 }
 
-train_hmagnet_single() {
+train_hcanet_single_v2_small_eval_save_replay() {
   if [[ $# < 3 || $# > 5 ]]; then
     echo "Invalid number of arguments (MAP COMMS MIXER NUMBER [STEPS]), where:"
     echo
@@ -24,7 +25,7 @@ train_hmagnet_single() {
     echo "     COMMS: {None, GAT, RGCN}"
     echo "     MIXER: {TRUE, FALSE}"
     echo "    NUMBER: integer to number this run"
-    echo "     STEPS: number of training steps (def. 1000000)"
+    echo "     STEPS: number of training steps (def. 5000000)"
 
     return 1
   fi
@@ -37,14 +38,12 @@ train_hmagnet_single() {
   mixer=${3}
   i=${4}
 
-  GROUP=A_${map}_${comms}_${mixer}
+  GROUP=C_${map}_${comms}_${mixer}
   RUNNAME=${GROUP}_${i}
 
-  STEPS=${5:-1000000}
+  STEPS=${5:-5000000}
 
-  # --episode_priority {mean,max,median}
-
-  com="tsp python -m hmagnet.training.train SMAC DDQN ${map} ${RUNNAME} --run_prefix ${GROUP} --batch_size ${BATCH_SIZE} --max_num_steps ${STEPS} --policy egreedy_decay --double_dqn --v2_state --use_rnn_action --share_action --act_encoding tanh --act_comms leakyrelu --act_action leakyrelu --device cuda --encoding_hidden 96 --comms_sizes 96,96 --action_hidden 64"
+  com="tsp python -m hcanet.training.train SMAC DDQN ${map} ${RUNNAME} --run_prefix ${GROUP} --batch_size ${BATCH_SIZE} --max_num_steps ${STEPS} --policy egreedy_decay --double_dqn --v2_state --use_rnn_action --share_encoding --share_action --act_encoding tanh --act_comms tanh --act_action tanh --device smart --encoding_hidden 96 --comms_sizes 96,96 --action_hidden 64 --optimizer adam --eval_interval 10000 --eps_start 1 --eps_end 0.1 --eps_anneal_time 600000 --save_replays --eval_episodes 10"
 
   graph_pars=""
   mixer_pars=""
@@ -55,10 +54,10 @@ train_hmagnet_single() {
   if [[ $mixer = "TRUE" ]]; then
     mixer_pars="--mixer vdn"
   fi
-  eval "$com $graph_pars $mixer_pars"
+  eval "$com $graph_pars $mixer_pars $replay_pars"
 }
 
-train_hmagnet_single_v2() {
+train_hcanet_single_v2() {
   if [[ $# < 3 || $# > 5 ]]; then
     echo "Invalid number of arguments (MAP COMMS MIXER NUMBER [STEPS]), where:"
     echo
@@ -66,7 +65,7 @@ train_hmagnet_single_v2() {
     echo "     COMMS: {None, GAT, RGCN}"
     echo "     MIXER: {TRUE, FALSE}"
     echo "    NUMBER: integer to number this run"
-    echo "     STEPS: number of training steps (def. 1000000)"
+    echo "     STEPS: number of training steps (def. 5000000)"
 
     return 1
   fi
@@ -79,14 +78,12 @@ train_hmagnet_single_v2() {
   mixer=${3}
   i=${4}
 
-  GROUP=A_${map}_${comms}_${mixer}
+  GROUP=C_${map}_${comms}_${mixer}
   RUNNAME=${GROUP}_${i}
 
-  STEPS=${5:-1000000}
+  STEPS=${5:-5000000}
 
-  # --episode_priority {mean,max,median}
-
-  com="tsp python -m hmagnet.training.train SMAC DDQN ${map} ${RUNNAME} --run_prefix ${GROUP} --batch_size ${BATCH_SIZE} --max_num_steps ${STEPS} --policy egreedy_decay --double_dqn --v2_state --use_rnn_action --share_encoding --share_action --act_encoding tanh --act_comms leakyrelu --act_action leakyrelu --device cuda --encoding_hidden 96 --comms_sizes 96,96 --action_hidden 64 --optimizer adam --save_replays --eval_episodes 10 --eval_interval 15000"
+  com="tsp python -m hcanet.training.train SMAC DDQN ${map} ${RUNNAME} --run_prefix ${GROUP} --batch_size ${BATCH_SIZE} --max_num_steps ${STEPS} --policy egreedy_decay --double_dqn --v2_state --use_rnn_action --share_encoding --share_action --act_encoding tanh --act_comms leakyrelu --act_action leakyrelu --device smart --encoding_hidden 96 --comms_sizes 96,96 --action_hidden 64 --optimizer adam --eval_interval 10000 --eps_start 1 --eps_end 0.1 --eps_anneal_time 600000 --eval_episodes 32"
 
   graph_pars=""
   mixer_pars=""
